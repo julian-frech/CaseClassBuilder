@@ -2,8 +2,11 @@ package org.julianfrech.samples
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+
 import java.sql.Timestamp
 import org.julianfrech.samples.CaseClassInitializer.generateInitializationCode
+
+import scala.reflect.ClassTag
 
 class CaseClassInitializerSpec extends AnyFlatSpec with Matchers {
 
@@ -36,6 +39,23 @@ class CaseClassInitializerSpec extends AnyFlatSpec with Matchers {
     code should include("nested = NestedClass(")
     code should include("x = 0")
     code should include("flag = false")
+
+  }
+
+  "DefaultValue" should "provide an empty array for array types" in {
+    implicit def arrayDefault[T: ClassTag]: DefaultValue[Array[T]] =
+      new DefaultValue[Array[T]] {
+        val value = Array.empty[T]
+      }
+
+    val defaultIntArray: Array[Int] = DefaultValue[Array[Int]].value
+    val defaultStringArray: Array[String] = DefaultValue[Array[String]].value
+
+    defaultIntArray shouldBe Array.empty[Int]
+    defaultStringArray shouldBe Array.empty[String]
+
+    defaultIntArray should have length 0
+    defaultStringArray should have length 0
   }
 
 }

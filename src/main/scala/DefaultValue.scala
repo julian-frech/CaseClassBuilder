@@ -1,6 +1,7 @@
 package org.julianfrech.samples
 
 import java.sql.Timestamp
+import scala.reflect.ClassTag
 
 trait DefaultValue[T] {
     def value: T
@@ -40,6 +41,10 @@ trait DefaultValue[T] {
     implicit val timestampDefault: DefaultValue[Timestamp] = new DefaultValue[Timestamp] {
       val value = new Timestamp(System.currentTimeMillis())
     }
+    implicit def arrayDefault[T: ClassTag]: DefaultValue[Array[T]] =
+      new DefaultValue[Array[T]] {
+        val value = Array.empty[T]
+      }
 
     // Option and collections
     implicit def optionDefault[T: DefaultValue]: DefaultValue[Option[T]] =
