@@ -32,22 +32,23 @@ jobs:
     - name: Build with sbt
       run: sbt package
 
-    - name: Extract tag name
-      run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
-    - name: Determine JAR file name
-      run: echo "JAR_NAME=caseclassbuilder_2.12-${{ env.TAG_NAME }}.jar" >> $GITHUB_ENV
-
     - name: List JAR files
       run: ls -l ./target/scala-2.12/
+
+    - name: Extract tag name
+      id: extract_tag
+      run: echo "::set-output name=tag::$(echo ${GITHUB_REF#refs/tags/})"
+
+    - name: Determine JAR file name
+      run: echo "JAR_NAME=caseclassbuilder_2.12-${{ steps.extract_tag.outputs.tag }}.jar" >> $GITHUB_ENV
 
     - name: Create Release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ env.TAG_NAME }}
-        release_name: Release ${{ env.TAG_NAME }}
+        tag_name: ${{ steps.extract_tag.outputs.tag }}
+        release_name: Release ${{ steps.extract_tag.outputs.tag }}
         draft: false
         prerelease: false
 
@@ -60,3 +61,4 @@ jobs:
         asset_path: ./target/scala-2.12/${{ env.JAR_NAME }}
         asset_name: ${{ env.JAR_NAME }}
         asset_content_type: application/java-archive
+
