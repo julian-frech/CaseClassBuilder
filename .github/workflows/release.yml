@@ -8,6 +8,9 @@ on:
 jobs:
   permissions:
     contents: write
+    issues: write
+    pull-requests: write
+
   build-and-release:
     runs-on: ubuntu-latest
     steps:
@@ -21,10 +24,9 @@ jobs:
         java-version: '8.0.402+6'
         distribution: 'temurin'
     
-    - name: Extract version from tag
-      id: extract_version
-      run: echo "::set-output name=VERSION::${GITHUB_REF#refs/tags/v}"
-
+    - name: Extract tag name
+      id: extract_tag
+      run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
 
     - name: Cache sbt
       uses: actions/cache@v3
@@ -46,15 +48,15 @@ jobs:
       run: ls -l ./target/scala-2.12/
 
     - name: Create Release
-      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ steps.extract_tag.outputs.TAG_NAME }}
+        release_name: Release ${{ steps.extract_tag.outputs.TAG_NAME }}
         draft: false
         prerelease: false
+
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
