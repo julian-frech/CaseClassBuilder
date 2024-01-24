@@ -7,3 +7,9 @@ lazy val root = (project in file("."))
     name := "CaseClassBuilder",
     idePackagePrefix := Some("org.julianfrech.samples")
   )
+
+libraryDependencies ++= Seq(
+  "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+  "org.scalatest" %% "scalatest" % "3.2.15" % Test
+)
+

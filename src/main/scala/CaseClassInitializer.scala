@@ -3,7 +3,7 @@ package org.julianfrech.samples
 import java.sql.Timestamp
 import scala.reflect.runtime.universe._
 
-object CaseClassInitializer extends App {
+object CaseClassInitializer {
 
   def generateInitializationCode[T: TypeTag]: String = {
     def defaultValueForType(t: Type): String = t match {
@@ -51,6 +51,5 @@ object CaseClassInitializer extends App {
 
     initCaseClass(typeOf[T])
   }
-
 
 }
