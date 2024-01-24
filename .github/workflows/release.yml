@@ -26,7 +26,7 @@ jobs:
     
     - name: Extract tag name
       id: extract_tag
-      run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
+      run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
     - name: Cache sbt
       uses: actions/cache@v3
@@ -52,12 +52,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.extract_tag.outputs.TAG_NAME }}
-        release_name: Release ${{ steps.extract_tag.outputs.TAG_NAME }}
+        tag_name: ${{ env.TAG_NAME }}
+        release_name: Release ${{ env.TAG_NAME }}
         draft: false
         prerelease: false
-
-
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
@@ -70,6 +68,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./target/scala-2.12/caseclassbuilder_2.12-${{ steps.extract_version.outputs.VERSION }}.jar
-        asset_name: caseclassbuilder_2.12-${{ steps.extract_version.outputs.VERSION }}.jar
+        asset_path: ./target/scala-2.12/caseclassbuilder_2.12-${{ env.TAG_NAME }}-SNAPSHOT.jar
+        asset_name: caseclassbuilder_2.12-${{ env.TAG_NAME }}-SNAPSHOT.jar
         asset_content_type: application/java-archive
+
