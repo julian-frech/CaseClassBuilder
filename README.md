@@ -31,3 +31,18 @@ import org.julianfrech.samples.CaseClassInitializer._
 case class SampleClass(a: Int, b: String, c: Option[Boolean])
 val initializationCode = generateInitializationCode[SampleClass]
 println(initializationCode)
+```
+
+## Customizing Default Values
+
+You can easily customize default values for specific types by creating implicit instances of `DefaultValue[T]`. Here's how you can set a custom default value for `String`:
+
+### Overwriting Default Values
+```scala
+implicit val customStringDefault: DefaultValue[String] = DefaultValue.createDefaultValue("custom default string")
+```
+### Adding Default Values
+```scala
+case class MyCustomClass(x: Int, y: String)
+implicit val myCustomClassDefault: DefaultValue[MyCustomClass] = DefaultValue.createDefaultValue(MyCustomClass(0, ""))
+```
