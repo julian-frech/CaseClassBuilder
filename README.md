@@ -44,6 +44,8 @@ case class StructedCaseClass(identificator: Option[String] = None, content: Opti
 case class SampleSmall(someId: Option[String] = None, details: Option[SampleNumbers] = None)
 case class SampleNumbers(someOtherId: Option[Int] = None, business: Option[String] = None)
 
+print(generateInitializationCode[StructedCaseClass])
+// Will return below
 StructedCaseClass(
   identificator = Some(""),
   content = Some(SampleNew(
