@@ -1,21 +1,2 @@
 [0m[[0m[0mdebug[0m] [0m[0mAcquiring lock on file /Users/julianfrech/Documents/GitHub/CaseClassBuilder/project/target/.sbt-compilation-infos/root-compile/.sbt-idea-lock ...[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/julianfrech/Documents/GitHub/CaseClassBuilder/src/main/scala/Main.scala:4:22: object runtime is not a member of package reflect[0m
-[0m[[0m[31merror[0m] [0m[0mimport scala.reflect.runtime.universe._[0m
-[0m[[0m[31merror[0m] [0m[0m                     ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/julianfrech/Documents/GitHub/CaseClassBuilder/src/main/scala/Main.scala:46:24: object runtime is not a member of package reflect[0m
-[0m[[0m[31merror[0m] [0m[0m  import scala.reflect.runtime.universe._[0m
-[0m[[0m[31merror[0m] [0m[0m                       ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/julianfrech/Documents/GitHub/CaseClassBuilder/src/main/scala/Main.scala:48:37: not found: type TypeTag[0m
-[0m[[0m[31merror[0m] [0m[0m  def generateInitializationCode[T: TypeTag]: String = {[0m
-[0m[[0m[31merror[0m] [0m[0m                                    ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/julianfrech/Documents/GitHub/CaseClassBuilder/src/main/scala/Main.scala:49:32: not found: type Type[0m
-[0m[[0m[31merror[0m] [0m[0m    def defaultValueForType(t: Type): String = t match {[0m
-[0m[[0m[31merror[0m] [0m[0m                               ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/julianfrech/Documents/GitHub/CaseClassBuilder/src/main/scala/Main.scala:64:26: not found: type Type[0m
-[0m[[0m[31merror[0m] [0m[0m    def initCaseClass(t: Type, indent: String = ""): String = {[0m
-[0m[[0m[31merror[0m] [0m[0m                         ^[0m
-[0m[[0m[31merror[0m] [0m[0m/Users/julianfrech/Documents/GitHub/CaseClassBuilder/src/main/scala/Main.scala:96:38: not found: type StructedCaseClass[0m
-[0m[[0m[31merror[0m] [0m[0m  println(generateInitializationCode[StructedCaseClass])[0m
-[0m[[0m[31merror[0m] [0m[0m                                     ^[0m
-[0m[[0m[31merror[0m] [0m[0m6 errors found[0m
 [0m[[0m[0mdebug[0m] [0m[0mReleasing lock on file /Users/julianfrech/Documents/GitHub/CaseClassBuilder/project/target/.sbt-compilation-infos/root-compile/.sbt-idea-lock.[0m
