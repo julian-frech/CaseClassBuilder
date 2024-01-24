@@ -6,13 +6,9 @@ on:
       - 'v*'
 
 jobs:
-  permissions:
-    contents: write
-    issues: write
-    pull-requests: write
-
   build-and-release:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v3
       with:
@@ -23,10 +19,6 @@ jobs:
       with:
         java-version: '8.0.402+6'
         distribution: 'temurin'
-    
-    - name: Extract tag name
-      id: extract_tag
-      run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
     - name: Cache sbt
       uses: actions/cache@v3
@@ -41,19 +33,19 @@ jobs:
       run: sbt package
 
     - name: Determine JAR file name
-      id: jar_name
-      run: echo "JAR_NAME=$(sbt -no-colors 'print version' | tail -1)-$(sbt -no-colors 'print scalaBinaryVersion' | tail -1).jar" >> $GITHUB_ENV
+      run: echo "JAR_NAME=caseclassbuilder_2.12-${{ env.TAG_NAME }}.jar" >> $GITHUB_ENV
 
     - name: List JAR files
       run: ls -l ./target/scala-2.12/
 
     - name: Create Release
+      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ env.TAG_NAME }}
-        release_name: Release ${{ env.TAG_NAME }}
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
 
@@ -61,14 +53,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./target/scala-2.12/caseclassbuilder_2.12-${{ env.TAG_NAME }}-SNAPSHOT.jar
-        asset_name: caseclassbuilder_2.12-${{ env.TAG_NAME }}-SNAPSHOT.jar
+        asset_path: ./target/scala-2.12/${{ env.JAR_NAME }}
+        asset_name: ${{ env.JAR_NAME }}
         asset_content_type: application/java-archive
-
