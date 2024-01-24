@@ -17,7 +17,7 @@ Case Class Initializer is a Scala library designed to simplify the initializatio
 
 ## Installation
 
-Include this library in your Scala project by adding the following dependency:
+Include this library in your Scala project by adding the following dependency: TODO
 
 ## Usage
 
@@ -32,6 +32,35 @@ case class SampleClass(a: Int, b: String, c: Option[Boolean])
 val initializationCode = generateInitializationCode[SampleClass]
 println(initializationCode)
 ```
+
+### Nested Case Classes
+```scala
+import org.julianfrech.samples.CaseClassInitializer._
+import java.sql.Timestamp
+import org.julianfrech.samples.CaseClassInitializer.generateInitializationCode
+
+case class SampleNew(someId: Option[String], someOtherId: Option[String], timeStampCol: Option[Timestamp])
+case class StructedCaseClass(identificator: Option[String] = None, content: Option[SampleNew] = None, contentAlternative: Option[SampleSmall] = None)
+case class SampleSmall(someId: Option[String] = None, details: Option[SampleNumbers] = None)
+case class SampleNumbers(someOtherId: Option[Int] = None, business: Option[String] = None)
+
+StructedCaseClass(
+  identificator = Some(""),
+  content = Some(SampleNew(
+    someId = Some(""),
+    someOtherId = Some(""),
+    timeStampCol = Some(2024-01-24 10:17:43.139)
+  )),
+  contentAlternative = Some(SampleSmall(
+    someId = Some(""),
+    details = Some(SampleNumbers(
+      someOtherId = Some(0),
+      business = Some("")
+    ))
+  ))
+)
+```
+
 
 ## Customizing Default Values
 
