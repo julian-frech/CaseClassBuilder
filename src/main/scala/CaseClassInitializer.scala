@@ -4,8 +4,6 @@ import java.sql.Timestamp
 import scala.reflect.runtime.universe._
 
 object CaseClassInitializer {
-
-  def generateInitializationCode[T: TypeTag]: String = {
     def defaultValueForType(t: Type): String = t match {
       case t if t =:= typeOf[String] => DefaultValue[String].value
       case t if t =:= typeOf[Int] => DefaultValue[Int].value.toString
@@ -17,8 +15,14 @@ object CaseClassInitializer {
       case t if t =:= typeOf[Byte] => DefaultValue[Byte].value.toString
       case t if t =:= typeOf[Short] => DefaultValue[Short].value.toString
       case t if t =:= typeOf[Timestamp] => DefaultValue[Timestamp].value.toString
+      case t if t.typeSymbol == typeOf[Option[_]].typeSymbol =>
+        val innerType = t.typeArgs.head
+        val innerDefaultValue = defaultValueForType(innerType)
+        s"Some($innerDefaultValue)"
       case _ => "???"
-    }
+  }
+  def generateInitializationCode[T: TypeTag]: String = {
+
 
     def initCaseClass(t: Type, indent: String = ""): String = {
       val params = t.decls.collectFirst {
@@ -50,6 +54,29 @@ object CaseClassInitializer {
     }
 
     initCaseClass(typeOf[T])
+  }
+  def listCaseClassProperties[T: TypeTag]: List[String] = {
+    val tpe = typeOf[T]
+
+    def typeToString(t: Type): String = t match {
+      case TypeRef(_, sym, args) =>
+        args match {
+          case Nil => sym.name.decodedName.toString
+          case _ => s"${sym.name}[${args.map(typeToString).mkString(", ")}]"
+        }
+      case _ => t.toString
+    }
+
+    val fields = tpe.decls.collect {
+      case m: MethodSymbol if m.isCaseAccessor =>
+        val fieldName = m.name.decodedName.toString
+        val fieldType = m.returnType
+        val fieldTypeName = typeToString(fieldType)
+        val defaultValue = CaseClassInitializer.defaultValueForType(fieldType)
+        s"${tpe.typeSymbol.name.decodedName}.$fieldName: $fieldTypeName = $defaultValue"
+    }.toList
+
+    fields
   }
 
 }

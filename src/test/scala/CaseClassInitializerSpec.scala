@@ -4,11 +4,12 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import java.sql.Timestamp
-import org.julianfrech.samples.CaseClassInitializer.generateInitializationCode
+import org.julianfrech.samples.CaseClassInitializer.{generateInitializationCode, listCaseClassProperties}
 
 import scala.reflect.ClassTag
 
 class CaseClassInitializerSpec extends AnyFlatSpec with Matchers {
+
 
   "DefaultValue" should "provide correct default values for standard types" in {
     DefaultValue[Int].value should be(0)
@@ -58,4 +59,22 @@ class CaseClassInitializerSpec extends AnyFlatSpec with Matchers {
     defaultStringArray should have length 0
   }
 
+}
+
+class CaseClassPropertiesSpec extends AnyFlatSpec with Matchers {
+
+  "listCaseClassProperties" should "list properties of OuterClass" in {
+    val properties = listCaseClassProperties[OuterClass]
+    properties should contain("OuterClass.nested: NestedClass = ???")
+    properties should contain("OuterClass.flag: Boolean = false")
+  }
+
+  it should "list properties of TestClass" in {
+    val properties = listCaseClassProperties[TestClass]
+    properties should contain("TestClass.a: Int = 0")
+    properties should contain("TestClass.b: String = \"\"")
+    properties should contain("TestClass.c: Option[Boolean] = Some(false)")
+  }
+
+  // Add more tests for other case classes
 }
