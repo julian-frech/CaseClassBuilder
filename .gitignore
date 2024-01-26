@@ -4,3 +4,7 @@
 *.xml
 out/.DS_Store
 .DS_Store
+*.class
+*.cache
+*.xml
+.idea/*
