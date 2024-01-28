@@ -15,7 +15,7 @@ class CaseClassInitializerSpec extends AnyFlatSpec with Matchers {
     DefaultValue[Int].value should be(0)
     DefaultValue[String].value should be("\"\"")
     DefaultValue[Boolean].value should be(false)
-    // Test other types as needed
+    //TODO: Test fruther default types are set
   }
 
   "generateInitializationCode" should "generate correct initialization code for case classes" in {
