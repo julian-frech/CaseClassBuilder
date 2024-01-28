@@ -9,7 +9,7 @@ Case Class Initializer is a Scala library designed to simplify the initializatio
 - **Dynamic Initialization**: Automatically generates initialization code for any Scala case class.
 - **Support for Nested Structures**: Seamlessly handles nested case classes.
 - **Customizable Default Values**: Allows customization of default values for different types.
-- **Case Class Properties Listing: Provides functionality to list all properties of a case class, including nested structures, in dot syntax.
+- **Case Class Properties Listing**: Provides functionality to list all properties of a case class, including nested structures, in dot syntax.
 
 ## Prerequisites
 
