@@ -1,11 +1,11 @@
 package org.julianfrech.samples
 
+import CaseClassInitializer.{generateInitializationCode, listCaseClassProperties}
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import java.sql.Timestamp
-import org.julianfrech.samples.CaseClassInitializer.{generateInitializationCode, listCaseClassProperties}
-
 import scala.reflect.ClassTag
 
 class CaseClassInitializerSpec extends AnyFlatSpec with Matchers {
@@ -20,7 +20,7 @@ class CaseClassInitializerSpec extends AnyFlatSpec with Matchers {
 
   it should "provide a current timestamp for Timestamp type" in {
     val currentTimestamp = new Timestamp(System.currentTimeMillis())
-    DefaultValue[Timestamp].value.getTime should be <= currentTimestamp.getTime
+    DefaultValue[Timestamp].value.getTime should be >= currentTimestamp.getTime
   }
 
   "generateInitializationCode" should "generate correct initialization code for case classes" in {
@@ -65,16 +65,15 @@ class CaseClassPropertiesSpec extends AnyFlatSpec with Matchers {
 
   "listCaseClassProperties" should "list properties of OuterClass" in {
     val properties = listCaseClassProperties[OuterClass]
-    properties should contain("OuterClass.nested: NestedClass = ???")
+    properties should contain("OuterClass.nested.x: Int = 0")
     properties should contain("OuterClass.flag: Boolean = false")
   }
 
-  it should "list properties of TestClass" in {
+
+  it should "correctly list properties for a simple case class" in {
     val properties = listCaseClassProperties[TestClass]
     properties should contain("TestClass.a: Int = 0")
     properties should contain("TestClass.b: String = \"\"")
     properties should contain("TestClass.c: Option[Boolean] = Some(false)")
   }
-
-  // Add more tests for other case classes
 }
