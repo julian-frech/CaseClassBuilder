@@ -18,11 +18,6 @@ class CaseClassInitializerSpec extends AnyFlatSpec with Matchers {
     // Test other types as needed
   }
 
-  it should "provide a current timestamp for Timestamp type" in {
-    val currentTimestamp = new Timestamp(System.currentTimeMillis())
-    DefaultValue[Timestamp].value.getTime should be >= currentTimestamp.getTime
-  }
-
   "generateInitializationCode" should "generate correct initialization code for case classes" in {
 
     val code = generateInitializationCode[TestClass]

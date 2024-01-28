@@ -46,7 +46,7 @@ trait DefaultValue[T] {
         val value = Array.empty[T]
       }
 
-    // Option and collections
+
     implicit def optionDefault[T: DefaultValue]: DefaultValue[Option[T]] =
       new DefaultValue[Option[T]] {
         val value = Some(implicitly[DefaultValue[T]].value)

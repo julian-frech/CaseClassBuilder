@@ -1,13 +1,7 @@
-
-*.idea/*
-*.iml
-*.xml
+.idea/*
 out/.DS_Store
 .DS_Store
-*.class
-*.cache
-*.xml
-.idea/*
 target/*
 project/*
 .bsp/*
+target/global-logging/sbt-global-log1389096371976315707.log

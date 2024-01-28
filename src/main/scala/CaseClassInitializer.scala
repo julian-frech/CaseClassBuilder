@@ -116,5 +116,4 @@ object CaseClassInitializer {
     listFields(tpe, prefix)
   }
 
-
 }
