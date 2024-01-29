@@ -3,8 +3,10 @@ package org.julianfrech.samples
 import java.sql.Timestamp
 
 case class NestedClass(x: Int)
+case class ClassWithSeqOfNested(nestedSeq: Seq[NestedClass])
+case class ClassWithOptionSeqOfNested(optionalNestedSeq: Option[Seq[NestedClass]])
 
-case class OuterClass(nested: NestedClass, flag: Boolean)
+case class OuterClass(nested: Option[NestedClass], flag: Boolean)
 
 case class TestClass(a: Int, b: String, c: Option[Boolean])
 

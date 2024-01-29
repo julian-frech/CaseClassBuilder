@@ -21,6 +21,7 @@ class CaseClassInitializerSpec extends AnyFlatSpec with Matchers {
   "generateInitializationCode" should "generate correct initialization code for case classes" in {
 
     val code = generateInitializationCode[TestClass]
+    println(code)
     code should include("TestClass(")
     code should include("a = 0")
     code should include("b = \"\"")
@@ -31,8 +32,9 @@ class CaseClassInitializerSpec extends AnyFlatSpec with Matchers {
 
 
     val code = generateInitializationCode[OuterClass]
+    println(code)
     code should include("OuterClass(")
-    code should include("nested = NestedClass(")
+    code should include("nested = Some(NestedClass(")
     code should include("x = 0")
     code should include("flag = false")
 
@@ -71,4 +73,16 @@ class CaseClassPropertiesSpec extends AnyFlatSpec with Matchers {
     properties should contain("TestClass.b: String = \"\"")
     properties should contain("TestClass.c: Option[Boolean] = Some(false)")
   }
+
+  it should "correctly list properties for a case class with a Seq of NestedClass" in {
+    val properties = listCaseClassProperties[ClassWithSeqOfNested]
+    properties should contain("ClassWithSeqOfNested.nestedSeq: Seq[NestedClass] = Seq.empty[NestedClass]")
+  }
+
+  it should "correctly list properties for a case class with an Option of Seq of NestedClass" in {
+    val properties = listCaseClassProperties[ClassWithOptionSeqOfNested]
+    properties should contain("ClassWithOptionSeqOfNested.optionalNestedSeq: Option[Seq[NestedClass]] = Some(Seq.empty[NestedClass])")
+  }
+
+
 }

@@ -81,6 +81,7 @@ object CaseClassInitializer {
   def listCaseClassProperties[T: TypeTag]: List[String] = {
     val tpe = typeOf[T]
     val optionType = typeOf[Option[Any]] // Handle Option types using Option[Any]
+    val collectionTypes = Seq(typeOf[Seq[Any]], typeOf[List[Any]], typeOf[Vector[Any]], typeOf[Set[Any]])
 
     def typeToString(t: Type): String = t match {
       case TypeRef(_, sym, args) =>
@@ -98,14 +99,43 @@ object CaseClassInitializer {
 
           fieldType match {
             case t if t <:< optionType =>
-              // Handle Option type
               val innerType = t.typeArgs.head
-              val innerTypeName = typeToString(innerType)
-              List(s"$prefix$fieldName: Option[$innerTypeName] = Some(${defaultValueForType(innerType)})")
-            case t if t <:< typeOf[Product] && t.typeSymbol.isClass =>
-              // Nested case class, list its fields
-              listFields(t, s"$prefix$fieldName.")
+              innerType match {
+                case it if collectionTypes.exists(ct => it <:< ct) =>
+                  val elementType = it.typeArgs.head
+                  val elementTypeName = typeToString(elementType)
+                  val collectionTypeName = innerType.typeSymbol.name.decodedName.toString
+                  if (elementType <:< typeOf[Product] && elementType.typeSymbol.isClass) {
+                    // Option[Collection[Case Class]]
+                    List(s"$prefix$fieldName: Option[$collectionTypeName[$elementTypeName]] = Some($collectionTypeName.empty[$elementTypeName])")
+                  } else {
+                    // Other Option[Collection] types
+                    List(s"$prefix$fieldName: Option[$collectionTypeName[$elementTypeName]] = Some($collectionTypeName.empty)")
+                  }
+                case it if it <:< typeOf[Product] && it.typeSymbol.isClass =>
+                  // Option[Nested Case Class]
+                  listFields(it, s"$prefix$fieldName.")
+                case _ =>
+                  // Other Option types
+                  val defaultValue = defaultValueForType(innerType)
+                  List(s"$prefix$fieldName: Option[$innerType] = Some($defaultValue)")
+              }
+
+            case t if collectionTypes.exists(ct => t <:< ct) =>
+              // Direct Collection Types
+              val elementType = t.typeArgs.head
+              val elementTypeName = typeToString(elementType)
+              val collectionTypeName = fieldType.typeSymbol.name.decodedName.toString
+              if (elementType <:< typeOf[Product] && elementType.typeSymbol.isClass) {
+                // Collections of case classes
+                List(s"$prefix$fieldName: $collectionTypeName[$elementTypeName] = $collectionTypeName.empty[$elementTypeName]")
+              } else {
+                // Collections of simple types
+                List(s"$prefix$fieldName: $collectionTypeName[$elementTypeName] = $collectionTypeName.empty")
+              }
+
             case _ =>
+              // Simple type, not wrapped in Option or Collection
               val defaultValue = defaultValueForType(fieldType)
               List(s"$prefix$fieldName: $fieldTypeName = $defaultValue")
           }
