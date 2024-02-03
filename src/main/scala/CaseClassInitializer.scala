@@ -5,11 +5,11 @@ import scala.reflect.runtime.universe._
 
 object CaseClassInitializer {
   def defaultValueForType(t: Type): String = t match {
+    case t if t =:= typeOf[Long] => DefaultValue[Long].value.toString + "L" // Add 'L' for Long literals
+    case t if t =:= typeOf[Float] => DefaultValue[Float].value.toString + "f" // Add 'f' for Float literals
+    case t if t =:= typeOf[Double] => DefaultValue[Double].value.toString + "d" // Add 'd' for Double literals
     case t if t =:= typeOf[String] => DefaultValue[String].value
     case t if t =:= typeOf[Int] => DefaultValue[Int].value.toString
-    case t if t =:= typeOf[Double] => DefaultValue[Double].value.toString
-    case t if t =:= typeOf[Float] => DefaultValue[Float].value.toString
-    case t if t =:= typeOf[Long] => DefaultValue[Long].value.toString
     case t if t =:= typeOf[Boolean] => DefaultValue[Boolean].value.toString
     case t if t =:= typeOf[Char] => s"'${DefaultValue[Char].value}'"
     case t if t =:= typeOf[Byte] => DefaultValue[Byte].value.toString
@@ -43,7 +43,7 @@ object CaseClassInitializer {
     case _ => "???"
   }
 
-  def generateInitializationCode[T: TypeTag]: String = {
+  def generateInitializationCode2[T: TypeTag]: String = {
 
 
     def initCaseClass(t: Type, indent: String = ""): String = {
@@ -146,4 +146,37 @@ object CaseClassInitializer {
     listFields(tpe, prefix)
   }
 
+  def generateInitializationCode[T: TypeTag]: String = {
+    def initCaseClass(t: Type, indent: String = ""): String = {
+      val params = t.decls.collectFirst {
+        case m: MethodSymbol if m.isPrimaryConstructor => m
+      }.get.paramLists.head
+
+      val paramStrings = params.map { p =>
+        val paramName = p.name.toString
+        val paramType = p.typeSignature
+
+        paramType match {
+          case t if t <:< typeOf[Option[_]] =>
+            val innerType = t.typeArgs.head
+            if (innerType <:< typeOf[Seq[_]] && innerType.typeArgs.head <:< typeOf[Product]) {
+              val seqInnerType = innerType.typeArgs.head
+              s"$paramName = Some(Seq(${initCaseClass(seqInnerType, indent + "  ")}))"
+            } else if (innerType <:< typeOf[Product] && innerType.typeSymbol.isClass) {
+              s"$paramName = Some(${initCaseClass(innerType, indent + "  ")})"
+            } else {
+              s"$paramName = Some(${defaultValueForType(innerType)})"
+            }
+          case t if t <:< typeOf[Product] && t.typeSymbol.isClass =>
+            s"$paramName = ${initCaseClass(t, indent + "  ")}"
+          case _ =>
+            s"$paramName = ${defaultValueForType(paramType)}"
+        }
+      }
+
+      s"${t.typeSymbol.name}(\n$indent  ${paramStrings.mkString(s",\n$indent  ")}\n$indent)"
+    }
+
+    initCaseClass(typeOf[T])
+  }
 }

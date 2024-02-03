@@ -14,3 +14,11 @@ case class SampleNew(someId: Option[String], someOtherId: Option[String], timeSt
 case class StructedCaseClass(identificator: Option[String] = None, content: Option[SampleNew] = None, contentAlternative: Option[SampleSmall] = None)
 case class SampleSmall(someId: Option[String] = None, details: Option[SampleNumbers] = None)
 case class SampleNumbers(someOtherId: Option[Int] = None, business: Option[String] = None)
+
+object tt{
+  ClassWithOptionSeqOfNested(
+    optionalNestedSeq = Some(Seq(NestedClass(
+      x = 0
+    )))
+  )
+}

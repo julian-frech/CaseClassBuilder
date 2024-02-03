@@ -1,7 +1,6 @@
 package org.julianfrech.samples
 
-import CaseClassInitializer.{generateInitializationCode, listCaseClassProperties}
-
+import CaseClassInitializer.{generateInitializationCode, generateInitializationCode2, listCaseClassProperties}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -9,6 +8,20 @@ import java.sql.Timestamp
 import scala.reflect.ClassTag
 
 class CaseClassInitializerSpec extends AnyFlatSpec with Matchers {
+
+  "generateInitializationCode" should "generate correct initialization code for ClassWithOptionSeqOfNested" in {
+    val expectedCode =
+      """ClassWithOptionSeqOfNested(
+        |  optionalNestedSeq = Some(Seq(NestedClass(
+        |    x = 0
+        |  )))
+        |)""".stripMargin
+
+    val generatedCode = generateInitializationCode[ClassWithOptionSeqOfNested]
+
+    println(generatedCode)
+    generatedCode shouldBe expectedCode
+  }
 
 
   "DefaultValue" should "provide correct default values for standard types" in {
@@ -85,4 +98,7 @@ class CaseClassPropertiesSpec extends AnyFlatSpec with Matchers {
   }
 
 
+
+
 }
+
